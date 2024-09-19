@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Task Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --background-color: #f0f9ff;
+            --card-color: #ffffff;
+            --text-color: #1f2937;
+            --delete-color: #ef4444;
+            --success-color: #10b981;
+        }
+        body, html {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.8em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.2em;
+            font-weight: 400;
+        }
+        .card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+        }
+        #student-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+        }
+        #student-info p {
+            margin: 0;
+            font-size: 1em;
+            color: var(--text-color);
+        }
+        #student-info strong {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        #todo-form {
+            display: flex;
+            margin-bottom: 30px;
+        }
+        #todo-input {
+            flex-grow: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px 0 0 8px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        #todo-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        button {
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #todo-form button {
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 0 8px 8px 0;
+        }
+        #todo-form button:hover {
+            background-color: var(--primary-color);
+        }
+        #todo-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #todo-list li {
+            background-color: var(--card-color);
+            margin-bottom: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        #todo-list li:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .task-checkbox.checked {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        .task-text {
+            font-size: 1.1em;
+            transition: all 0.2s ease;
+        }
+        .task-text.completed {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        .delete-btn {
+            background-color: transparent;
+            color: var(--delete-color);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid var(--delete-color);
+        }
+        .delete-btn:hover {
+            background-color: var(--delete-color);
+            color: white;
+        }
+        .empty-state {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.1em;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Elite Task Manager</h1>
+            <p class="subtitle">Elevate your productivity to new heights</p>
+        </header>
+        <div id="student-info" class="card"></div>
+        <form id="todo-form">
+            <input type="text" id="todo-input" placeholder="Enter a new task" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <ul id="todo-list"></ul>
+        <div class="empty-state" style="display: none;">
+            <p>Your task list is empty. Add a new task to get started!</p>
+        </div>
+    </div>
+
+    <script>
+        const studentInfo = {
+            name: "Tanishq Gupta",
+            rollNumber: "2310992384",
+            email: "tanishq@gmail.com"
+        };
+
+        const studentInfoElement = document.getElementById("student-info");
+        const todoForm = document.getElementById("todo-form");
+        const todoInput = document.getElementById("todo-input");
+        const todoList = document.getElementById("todo-list");
+        const emptyState = document.querySelector('.empty-state');
+
+        studentInfoElement.innerHTML = `
+            <p><strong>Name:</strong> ${studentInfo.name}</p>
+            <p><strong>Roll Number:</strong> ${studentInfo.rollNumber}</p>
+            <p><strong>Email:</strong> ${studentInfo.email}</p>
+        `;
+
+        let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+        function saveTasks() {
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function renderTasks() {
+            todoList.innerHTML = "";
+            if (tasks.length === 0) {
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+                tasks.forEach((task, index) => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <div class="task-content">
+                            <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-index="${index}"></div>
+                            <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
+                        </div>
+                        <button class="delete-btn" data-index="${index}">Delete</button>
+                    `;
+                    todoList.appendChild(li);
+                    anime({
+                        targets: li,
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 500,
+                        easing: 'easeOutQuad'
+                    });
+                });
+            }
+        }
+
+        todoForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const newTaskText = todoInput.value.trim();
+            if (newTaskText) {
+                const newTask = { text: newTaskText, completed: false };
+                tasks.push(newTask);
+                saveTasks();
+                renderTasks();
+                todoInput.value = "";
+                anime({
+                    targets: todoList.lastChild,
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+            }
+        });
+
+        todoList.addEventListener("click", function(e) {
+            if (e.target.classList.contains("delete-btn")) {
+                const index = e.target.getAttribute("data-index");
+                const taskElement = e.target.closest('li');
+                anime({
+                    targets: taskElement,
+                    opacity: 0,
+                    translateX: 50,
+                    duration: 300,
+                    easing: 'easeOutQuad',
+                    complete: function() {
+                        tasks.splice(index, 1);
+                        saveTasks();
+                        renderTasks();
+                    }
+                });
+            } else if (e.target.classList.contains("task-checkbox")) {
+                const index = e.target.getAttribute("data-index");
+                tasks[index].completed = !tasks[index].completed;
+                saveTasks();
+                renderTasks();
+            }
+        });
+
+        renderTasks();
+    </script>
+</body>
+</html>
